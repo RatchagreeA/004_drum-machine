@@ -1,15 +1,34 @@
 import "./App.scss";
+import { useState, useEffect } from "react";
 
 function App() {
+    const [cnt, setCnt] = useState(0);
+
     return (
         <div className="App">
             <div id="drum-machine">
-                <p id="display">{"xxx"}</p>
+                <h1 id="display">{"drum-machine"}</h1>
+                <h2>{cnt}</h2>
+                <div className="btn" onClick={() => setCnt(cnt + 1)}>
+                    xxxxx
+                </div>
+                <div className="box-container">
+                    {bankOne.map((key, idx) => (
+                        <Box keyTrigger={key.keyTrigger} key={idx} />
+                    ))}
+                </div>
             </div>
         </div>
     );
 }
 
+function Box(props) {
+    return (
+        <div className="box">
+            <h2 className="key-text">{props.keyTrigger}</h2>
+        </div>
+    );
+}
 export default App;
 
 const bankOne = [
