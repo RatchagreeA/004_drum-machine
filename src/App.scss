@@ -10,7 +10,9 @@
     .box-container {
         display: inline-grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 2px;
+        gap: 10px;
+        padding: 10px;
+        border: 2px solid black;
 
         .box {
             width: 50px;
