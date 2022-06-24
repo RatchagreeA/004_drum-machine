@@ -1,3 +1,8 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
 .App {
     text-align: center;
     user-select: none;
@@ -6,6 +11,24 @@
         height: 50px;
         border: 2px solid black;
         cursor: pointer;
+    }
+    .toggle-bar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .toggle-container {
+            width: 50px;
+            height: 20px;
+            border: 2px solid black;
+            display: flex;
+            justify-content: flex-start;
+            .toggle-status {
+                width: 50%;
+                height: 100%;
+                background-color: black;
+            }
+        }
     }
     .box-container {
         display: inline-grid;
