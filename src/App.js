@@ -3,53 +3,87 @@ import { useState, useEffect } from "react";
 
 function App() {
     const [volume, setVolume] = useState(0.3);
+    const [display, setDisplay] = useState("");
     const [powStatus, setPowStatus] = useState(true);
     const [bankStatus, setBankStatus] = useState(true);
     const [bank, setBank] = useState(bankOne);
 
+    const clips = [].slice.call(document.getElementsByClassName("clip"));
+    clips.forEach((sound) => {
+        sound.volume = volume;
+    });
+
     const playFcn = (key) => {
         const sound = document.getElementById(key);
         sound.currentTime = 0;
-        sound.volume = volume;
-        sound.play();
+        sound
+            .play()
+            .then(function () {
+                setDisplay(sound.id);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
+
     useEffect(() => {
-        if (bankStatus) {
-            setBank(bankOne);
-        } else {
-            setBank(bankTwo);
+        const status = powStatus ? "Power: ON" : "Power: OFF";
+        setDisplay(status);
+    }, [powStatus]);
+
+    useEffect(() => {
+        if (powStatus) {
+            const volText = "Volume: " + Math.round(volume * 100);
+            setDisplay(volText);
         }
-        console.log("pow " + powStatus);
+    }, [volume, powStatus]);
+
+    useEffect(() => {
+        if (powStatus) {
+            if (bankStatus) {
+                setBank(bankOne);
+                setDisplay("Heater Kit");
+            } else {
+                setBank(bankTwo);
+                setDisplay("Smooth Piano Kit");
+            }
+        }
     }, [bankStatus, powStatus]);
+
     return (
         <div className="App">
             <div id="drum-machine">
                 <h1 id="display">{"drum-machine"}</h1>
+                <h1 id="display">{display}</h1>
                 <ToggleBar
                     text={"Power"}
-                    style={
-                        powStatus
-                            ? { justifyContent: "flex-end" }
-                            : { justifyContent: "flex-start" }
-                    }
+                    status={powStatus}
                     setStatus={() => setPowStatus(!powStatus)}
                 />
                 <ToggleBar
                     text={"Bank"}
-                    style={
-                        bankStatus
-                            ? { justifyContent: "flex-end" }
-                            : { justifyContent: "flex-start" }
-                    }
+                    status={bankStatus}
                     setStatus={() => setBankStatus(!bankStatus)}
                 />
-                <VolumeSlider volume={volume} setVolume={setVolume} />
-                <Keyboard musicPack={bank} playFcn={playFcn} />
+                <VolumeSlider
+                    volume={volume}
+                    setVolume={setVolume}
+                    setDisplay={setDisplay}
+                />
+                <Keyboard
+                    musicPack={bank}
+                    playFcn={playFcn}
+                    setDisplay={setDisplay}
+                    powStatus={powStatus}
+                />
             </div>
         </div>
     );
 }
-const ToggleBar = ({ text, style, setStatus }) => {
+const ToggleBar = ({ text, status, setStatus }) => {
+    const style = status
+        ? { justifyContent: "flex-end" }
+        : { justifyContent: "flex-start" };
     return (
         <div className="toggle-bar" onClick={setStatus}>
             <h2>{text}</h2>
@@ -62,7 +96,6 @@ const ToggleBar = ({ text, style, setStatus }) => {
 const VolumeSlider = ({ volume, setVolume }) => {
     return (
         <div className="volume-slider">
-            <h2>{"Volume: " + Math.round(volume * 100)}</h2>
             <input
                 max="1"
                 min="0"
@@ -74,33 +107,39 @@ const VolumeSlider = ({ volume, setVolume }) => {
         </div>
     );
 };
-const Keyboard = ({ musicPack, playFcn }) => {
+const Keyboard = ({ musicPack, playFcn, powStatus }) => {
     return (
         <div className="box-container">
             {musicPack.map((sound, idx) => (
-                <Key sound={sound} key={idx} playFcn={playFcn} />
+                <Key
+                    sound={sound}
+                    key={idx}
+                    playFcn={playFcn}
+                    powStatus={powStatus}
+                />
             ))}
         </div>
     );
 };
-const Key = ({ sound, playFcn }) => {
+const Key = ({ sound, playFcn, powStatus }) => {
     const handleKeydown = (event) => {
         if (event.keyCode === sound.keyCode) {
             playFcn(sound.id);
         }
     };
     useEffect(() => {
-        console.log("st");
         document.addEventListener("keydown", handleKeydown);
         return () => {
-            console.log("ret");
             document.removeEventListener("keydown", handleKeydown);
         };
     }, [sound]);
+    const id = sound.id;
+    const src = powStatus ? sound.url : "#";
+    const key = sound.keyTrigger;
     return (
-        <div className="box" onClick={() => playFcn(sound.id)}>
-            <h2 className="key-text">{sound.keyTrigger}</h2>
-            <audio className="clip" id={sound.id} src={sound.url} />
+        <div className="box" onClick={() => playFcn(id)}>
+            <h2 className="key-text">{key}</h2>
+            <audio className="clip" id={id} src={src} />
         </div>
     );
 };
