@@ -43,31 +43,34 @@ function App() {
                 <div className="header-container">
                     <h1 id="header">Drum machine</h1>
                 </div>
+                <div className="controler-container">
+                    <Keyboard
+                        musicPack={bank}
+                        setDisplay={setDisplay}
+                        powStatus={powStatus}
+                    />
+                    <div className="controler">
+                        <div className="display-container">
+                            <h1 id="display">{display}</h1>
+                        </div>
 
-                <div className="display-container">
-                    <h1 id="display">{display}</h1>
+                        <ToggleBar
+                            text={"Power"}
+                            status={powStatus}
+                            setStatus={() => setPowStatus(!powStatus)}
+                        />
+                        <ToggleBar
+                            text={"Bank"}
+                            status={bankStatus}
+                            setStatus={() => setBankStatus(!bankStatus)}
+                        />
+                        <VolumeSlider
+                            volume={volume}
+                            setVolume={setVolume}
+                            setDisplay={setDisplay}
+                        />
+                    </div>
                 </div>
-
-                <ToggleBar
-                    text={"Power"}
-                    status={powStatus}
-                    setStatus={() => setPowStatus(!powStatus)}
-                />
-                <ToggleBar
-                    text={"Bank"}
-                    status={bankStatus}
-                    setStatus={() => setBankStatus(!bankStatus)}
-                />
-                <VolumeSlider
-                    volume={volume}
-                    setVolume={setVolume}
-                    setDisplay={setDisplay}
-                />
-                <Keyboard
-                    musicPack={bank}
-                    setDisplay={setDisplay}
-                    powStatus={powStatus}
-                />
             </div>
         </div>
     );
@@ -123,7 +126,7 @@ const Key = ({ sound, setDisplay, powStatus }) => {
 
     const inactiveStyle = {
         backgroundColor: "white",
-        boxShadow: "3px 3px 5px black",
+        boxShadow: "3px 3px 5px grey",
         marginTop: 0,
     };
     const [padStyle, setPadStyle] = useState(inactiveStyle);
