@@ -8,28 +8,15 @@ function App() {
     const [bankStatus, setBankStatus] = useState(true);
     const [bank, setBank] = useState(bankOne);
 
-    const clips = [].slice.call(document.getElementsByClassName("clip"));
-    clips.forEach((sound) => {
-        sound.volume = volume;
-    });
-
-    const playFcn = (key) => {
-        const sound = document.getElementById(key);
-        sound.currentTime = 0;
-        sound
-            .play()
-            .then(function () {
-                setDisplay(sound.id);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    };
-
     useEffect(() => {
         const status = powStatus ? "Power: ON" : "Power: OFF";
         setDisplay(status);
     }, [powStatus]);
+
+    const clips = [].slice.call(document.getElementsByClassName("clip"));
+    clips.forEach((sound) => {
+        sound.volume = volume;
+    });
 
     useEffect(() => {
         if (powStatus) {
@@ -53,8 +40,14 @@ function App() {
     return (
         <div className="App">
             <div id="drum-machine">
-                <h1 id="display">{"drum-machine"}</h1>
-                <h1 id="display">{display}</h1>
+                <div className="header-container">
+                    <h1 id="header">Drum machine</h1>
+                </div>
+
+                <div className="display-container">
+                    <h1 id="display">{display}</h1>
+                </div>
+
                 <ToggleBar
                     text={"Power"}
                     status={powStatus}
@@ -72,7 +65,6 @@ function App() {
                 />
                 <Keyboard
                     musicPack={bank}
-                    playFcn={playFcn}
                     setDisplay={setDisplay}
                     powStatus={powStatus}
                 />
@@ -107,24 +99,59 @@ const VolumeSlider = ({ volume, setVolume }) => {
         </div>
     );
 };
-const Keyboard = ({ musicPack, playFcn, powStatus }) => {
+const Keyboard = ({ musicPack, setDisplay, powStatus }) => {
     return (
         <div className="box-container">
             {musicPack.map((sound, idx) => (
                 <Key
                     sound={sound}
+                    setDisplay={setDisplay}
                     key={idx}
-                    playFcn={playFcn}
                     powStatus={powStatus}
                 />
             ))}
         </div>
     );
 };
-const Key = ({ sound, playFcn, powStatus }) => {
+const Key = ({ sound, setDisplay, powStatus }) => {
+    const activeStyle = {
+        backgroundColor: "orange",
+        boxShadow: "0 3px orange",
+        border: "none",
+        marginTop: 3,
+    };
+
+    const inactiveStyle = {
+        backgroundColor: "white",
+        boxShadow: "3px 3px 5px black",
+        marginTop: 0,
+    };
+    const [padStyle, setPadStyle] = useState(inactiveStyle);
+    const activatePad = () => {
+        if (padStyle.backgroundColor === "orange") {
+            setPadStyle(inactiveStyle);
+            setTimeout(() => setPadStyle(activeStyle), 100);
+        } else {
+            setPadStyle(activeStyle);
+            setTimeout(() => setPadStyle(inactiveStyle), 100);
+        }
+    };
+    const playFcn = (key) => {
+        const trg = document.getElementById(key);
+        trg.currentTime = 0;
+        trg.play()
+            .then(function () {
+                setDisplay(sound.id);
+                activatePad();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
     const handleKeydown = (event) => {
         if (event.keyCode === sound.keyCode) {
-            playFcn(sound.id);
+            playFcn(sound.keyTrigger);
         }
     };
     useEffect(() => {
@@ -132,14 +159,22 @@ const Key = ({ sound, playFcn, powStatus }) => {
         return () => {
             document.removeEventListener("keydown", handleKeydown);
         };
-    }, [sound]);
+    }, [sound, padStyle]);
+
     const id = sound.id;
     const src = powStatus ? sound.url : "#";
     const key = sound.keyTrigger;
     return (
-        <div className="box" onClick={() => playFcn(id)}>
-            <h2 className="key-text">{key}</h2>
-            <audio className="clip" id={id} src={src} />
+        <div className="container">
+            <div
+                className="drum-pad box"
+                style={padStyle}
+                onClick={() => playFcn(key)}
+                id={id}
+            >
+                <h2 className="key-text">{key}</h2>
+                <audio className="clip" id={key} src={src} />
+            </div>
         </div>
     );
 };

@@ -6,12 +6,7 @@
 .App {
     text-align: center;
     user-select: none;
-    .btn {
-        width: 50px;
-        height: 50px;
-        border: 2px solid black;
-        cursor: pointer;
-    }
+
     .toggle-bar {
         display: flex;
         flex-direction: column;
@@ -36,15 +31,20 @@
         gap: 10px;
         padding: 10px;
         border: 2px solid black;
-
-        .box {
-            width: 50px;
-            height: 50px;
-            border: 2px solid black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
+        background-color: grey;
+        .container {
+            width: 55px;
+            height: 55px;
+            .box {
+                width: 50px;
+                height: 50px;
+                border-radius: 3px;
+                background-color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+            }
         }
     }
 }
