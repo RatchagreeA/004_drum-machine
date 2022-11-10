@@ -18,4 +18,4 @@ Drum Machine is a web app that lets users play audio by pressing a button or key
 3. Change audio set on Bank button.
 4. On/Off app on Power button.
 
-Link Demo : https://ratchagreea.github.io/004_drum-machine
+[Link Demo Here!](https://ratchagreea.github.io/004_drum-machine)
